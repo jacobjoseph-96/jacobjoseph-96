@@ -1,7 +1,7 @@
 {
- "generatedAt": "2026-07-27T21:10:48Z",
+ "generatedAt": "2026-07-27T21:35:04Z",
  "user": "jacobjoseph-96",
- "totalContributions": 10,
+ "totalContributions": 11,
  "activeDays": 5,
  "longestStreak": 1,
  "currentStreak": 1,
@@ -9,7 +9,7 @@
  "rank": "E",
  "previousLevel": 2,
  "stats": {
-  "str": 10,
+  "str": 2,
   "agi": 0,
   "int": 11,
   "vit": 1,
@@ -2350,7 +2350,7 @@
   {
    "d": "2026-06-25",
    "c": 4,
-   "l": 4,
+   "l": 3,
    "x": 47,
    "y": 4
   },
@@ -2573,7 +2573,7 @@
   },
   {
    "d": "2026-07-27",
-   "c": 3,
+   "c": 4,
    "l": 3,
    "x": 52,
    "y": 1
@@ -2583,14 +2583,14 @@
   {
    "d": "2026-06-25",
    "c": 4,
-   "l": 4,
+   "l": 3,
    "x": 47,
    "y": 4,
    "rank": 0
   },
   {
    "d": "2026-07-27",
-   "c": 3,
+   "c": 4,
    "l": 3,
    "x": 52,
    "y": 1,
@@ -2671,5 +2671,5 @@
    "x": 48
   }
  ],
- "source": "public"
+ "source": "graphql"
 }
