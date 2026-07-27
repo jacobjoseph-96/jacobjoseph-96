@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>frame grid</title>
+<style>
+  body { margin:0; background:#0b0d13; color:#8b93a7;
+         font:11px ui-monospace,"Cascadia Code",monospace; padding:10px; }
+  .f { margin-bottom:10px; }
+  .f b { color:#a855f7; display:block; margin-bottom:3px; }
+  svg { width:100%; height:auto; display:block; border-radius:8px; }
+</style>
+</head>
+<body>
+<div id="out"></div>
+<script>
+const FRAMES = [
+  ['arise-dark', 6000, 'ARISE dark @6.0s — elite beat'],
+  ['arise-dark', 13000, 'ARISE dark @13.0s — ambient army'],
+  ['arise-light', 4400, 'ARISE light @4.4s — rising'],
+  ['grandline-light', 3600, 'GRAND LINE light @3.6s — declaration (parchment)'],
+  ['grandline-dark', 13000, 'GRAND LINE dark @13.0s — the voyage'],
+  ['arise-static', 0, 'ARISE static — CSS-off / reduced-motion fallback'],
+  ['hero-solo-dark', 3000, 'hero solo-dark'],
+  ['hero-onepiece-light', 3000, 'hero onepiece-light (WANTED)'],
+];
+(async () => {
+  const out = document.getElementById('out');
+  for (const [name, t, label] of FRAMES) {
+    const d = document.createElement('div');
+    d.className = 'f';
+    d.innerHTML = `<b>${label}</b>` + await (await fetch(`../dist/${name}.svg?${Date.now()}`)).text();
+    out.appendChild(d);
+    // One rAF is not enough — CSS animations are not registered until style
+    // has settled, and seeking too early silently leaves them at t=0.
+    await new Promise(r => requestAnimationFrame(r));
+    await new Promise(r => setTimeout(r, 60));
+    for (const a of document.getAnimations()) {
+      if (d.contains(a.effect?.target)) { a.pause(); try { a.currentTime = t; } catch {} }
+    }
+  }
+  document.title = 'ready';
+})();
+</script>
+</body>
+</html>

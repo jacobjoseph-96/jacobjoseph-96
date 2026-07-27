@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>banner preview</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin:0; background:#0b0d13; color:#e6edf7;
+         font:13px/1.5 ui-monospace,"Cascadia Code",monospace; }
+  header { position:sticky; top:0; z-index:9; background:#11131b; border-bottom:1px solid #232838;
+           padding:12px 16px; display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+  button { background:#1b2030; color:#e6edf7; border:1px solid #2f3648; border-radius:6px;
+           padding:5px 11px; cursor:pointer; font:inherit; }
+  button:hover { background:#232a3d; }
+  button.on { background:#7c3aed; border-color:#a855f7; }
+  #stage { padding:22px 16px 60px; }
+  #stage svg { width:100%; height:auto; display:block; border-radius:10px; }
+  .row { display:flex; gap:10px; align-items:center; }
+  input[type=range] { width:340px; accent-color:#a855f7; }
+  #t { min-width:62px; color:#a855f7; font-weight:700; }
+  .beats { display:flex; gap:6px; flex-wrap:wrap; }
+  .beats button { font-size:11px; padding:3px 8px; }
+  .note { color:#6f7f99; }
+</style>
+</head>
+<body>
+<header>
+  <div class="row" id="themes"></div>
+  <div class="row">
+    <button id="play">⏸ pause</button>
+    <button id="restart">↻ restart</button>
+  </div>
+  <div class="row">
+    <input type="range" id="scrub" min="0" max="16000" step="50" value="0">
+    <span id="t">0.00s</span>
+  </div>
+  <div class="beats" id="beats"></div>
+  <span class="note" id="size"></span>
+</header>
+<div id="stage">loading…</div>
+
+<script>
+const THEMES = [
+  ['arise-dark','ARISE dark'], ['arise-light','ARISE light'],
+  ['grandline-dark','GRAND LINE dark'], ['grandline-light','GRAND LINE light'],
+  ['arise-static','ARISE static'], ['grandline-static','GRAND LINE static'],
+];
+const BEATS = [
+  ['void',400],['summon',1600],['inhale',2700],['IMPACT',3300],
+  ['rising',4200],['elite',6000],['oath',7400],['army',9500],['ambient',13000],
+];
+
+const stage = document.getElementById('stage');
+let current = 'arise-dark', playing = true;
+
+const anims = () => stage.querySelectorAll('svg')[0]
+  ? [...document.getAnimations()].filter(a => stage.contains(a.effect?.target ?? document.body))
+  : [];
+
+async function load(name) {
+  current = name;
+  const res = await fetch(`../dist/${name}.svg?` + Date.now());
+  const txt = await res.text();
+  document.getElementById('size').textContent = (new Blob([txt]).size/1024).toFixed(1) + ' KB';
+  stage.innerHTML = txt;
+  document.querySelectorAll('#themes button').forEach(b =>
+    b.classList.toggle('on', b.dataset.n === name));
+  seek(+document.getElementById('scrub').value);
+  setPlaying(playing);
+}
+
+function seek(ms) {
+  document.getElementById('t').textContent = (ms/1000).toFixed(2) + 's';
+  for (const a of anims()) { try { a.currentTime = ms; } catch {} }
+}
+function setPlaying(p) {
+  playing = p;
+  document.getElementById('play').textContent = p ? '⏸ pause' : '▶ play';
+  for (const a of anims()) p ? a.play() : a.pause();
+}
+
+document.getElementById('themes').innerHTML =
+  THEMES.map(([n,l]) => `<button data-n="${n}">${l}</button>`).join('');
+document.getElementById('themes').onclick = e => { if (e.target.dataset.n) load(e.target.dataset.n); };
+
+document.getElementById('beats').innerHTML =
+  BEATS.map(([l,ms]) => `<button data-ms="${ms}">${l}</button>`).join('');
+document.getElementById('beats').onclick = e => {
+  if (!e.target.dataset.ms) return;
+  setPlaying(false);
+  document.getElementById('scrub').value = e.target.dataset.ms;
+  seek(+e.target.dataset.ms);
+};
+
+document.getElementById('scrub').oninput = e => { setPlaying(false); seek(+e.target.value); };
+document.getElementById('play').onclick = () => setPlaying(!playing);
+document.getElementById('restart').onclick = () => load(current);
+
+// Keep the scrubber tracking playback.
+setInterval(() => {
+  if (!playing) return;
+  const a = anims()[0];
+  if (a && a.currentTime != null) {
+    document.getElementById('scrub').value = Math.min(16000, a.currentTime);
+    document.getElementById('t').textContent = (a.currentTime/1000).toFixed(2) + 's';
+  }
+}, 100);
+
+load('arise-dark');
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "jacobjoseph-96-profile",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Generates the animated SVGs on github.com/jacobjoseph-96 — zero runtime dependencies.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "fetch": "node scripts/fetch.mjs",
+    "render": "node scripts/render.mjs",
+    "demo": "node scripts/render.mjs --demo",
+    "build": "npm run fetch && npm run render",
+    "stamp": "node scripts/stamp-readme.mjs",
+    "glyphs": "node scripts/gen-glyphs.mjs",
+    "preview": "node scripts/serve.mjs"
+  }
+}
