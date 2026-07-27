@@ -42,8 +42,10 @@ jobs:
       - name: render SVGs
         run: npm run render
 
+      # run_id, not run_number: run_number starts at 1 and can collide with a
+      # hand-stamped value, producing no diff and leaving camo on a cached 404.
       - name: bust camo cache in README
-        run: npm run stamp -- ${{ github.run_number }}
+        run: npm run stamp -- ${{ github.run_id }}
 
       - name: commit data + README
         run: |
