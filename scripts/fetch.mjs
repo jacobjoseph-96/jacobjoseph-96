@@ -96,12 +96,54 @@ const previousLevel = (() => {
   try { return JSON.parse(fs.readFileSync(OUT, 'utf8')).level; } catch { return undefined; }
 })();
 
-let raw, source;
+const total = (r) => r.days.reduce((a, b) => a + b.count, 0);
+
+let graph = null;
 if (TOKEN) {
-  try { raw = await viaGraphQL(); source = 'graphql'; }
+  try { graph = await viaGraphQL(); }
   catch (e) { console.warn(`! graphql failed (${e.message.slice(0, 120)}) — falling back to public`); }
 }
-if (!raw) { raw = await viaPublic(); source = 'public'; }
+
+/**
+ * Always fetch the public calendar too, even when GraphQL succeeded.
+ *
+ * `contributionsCollection` is scoped to what the *token* can see. A
+ * repo-scoped GITHUB_TOKEN returns a small fraction of the real year and
+ * reports it as success — no error, no clue, just a near-empty chart. That
+ * silent truncation shipped an 11-contribution year against a real 75.
+ * Cross-checking costs one unauthenticated request and turns the failure
+ * from invisible into a loud warning.
+ */
+let pub = null;
+try { pub = await viaPublic(); }
+catch (e) { console.warn(`! public calendar unavailable (${e.message.slice(0, 120)})`); }
+
+if (!graph && !pub) throw new Error('no contribution data from either source');
+
+let raw, source;
+if (graph && pub && total(pub) > total(graph)) {
+  raw = pub;
+  source = 'public';
+  console.warn(`! calendars disagree — graphql ${total(graph)}, public ${total(pub)}. Using public.`);
+  console.warn(`  The token can only see part of your year. Set GH_PAT (classic, scope`);
+  console.warn(`  read:user) in this repo's secrets to read the full profile calendar,`);
+  console.warn(`  including private contributions if your profile has them enabled.`);
+} else {
+  raw = graph ?? pub;
+  source = graph ? 'graphql' : 'public';
+}
+
+// Each source under-reports different fields, so every value is a lower
+// bound — take the better of the two rather than whichever calendar won.
+const best = (a, b) => Math.max(a ?? 0, b ?? 0);
+raw = {
+  ...raw,
+  prs: best(graph?.prs, pub?.prs),
+  issues: best(graph?.issues, pub?.issues),
+  reviews: best(graph?.reviews, pub?.reviews),
+  repos: best(graph?.repos, pub?.repos),
+  languages: best(graph?.languages, pub?.languages),
+};
 
 const data = derive({ ...raw, previousLevel });
 data.source = source;
