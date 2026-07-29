@@ -67,17 +67,35 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data README.md
-          git diff --quiet --cached && { echo "no data change"; exit 0; }
-          git commit -m "chore: daily extraction [skip ci]"
-          # main can move between checkout and push — a manual push, or the
-          # previous scheduled run landing late. The payload is regenerated
-          # data, never a conflict a human needs to resolve, so rebase onto
-          # whatever arrived and try again instead of failing the build.
+          # The payload is a full regeneration, not a patch, so park it outside
+          # the work tree — it has to survive the reset each attempt makes.
+          payload="$(mktemp -d)"
+          cp -r data "$payload/data"
+          cp README.md "$payload/README.md"
+
           for attempt in 1 2 3; do
-            if git push; then exit 0; fi
-            echo "push rejected (attempt $attempt) — rebasing onto origin/main"
-            git pull --rebase --autostash origin main || true
+            # Rebase onto whatever main is NOW, not onto what checkout saw.
+            # "Re-run jobs" replays at the ORIGINAL run's SHA, so the checked-out
+            # tip can be a day stale and the first push is rejected every time.
+            # -B also recovers a detached HEAD left by an earlier attempt.
+            git fetch -q origin main
+            git checkout -qB main origin/main
+
+            # Re-lay the payload; never merge it. Regenerated JSON conflicts
+            # with regenerated JSON on essentially every line, so `pull --rebase`
+            # here does not "try again", it halts mid-rebase and strands the
+            # repo on a detached HEAD with unmerged files — which is exactly
+            # what burned the 2026-07-29 run. The only resolution anyone wants
+            # is "the file we just generated". Copying says that; rebase cannot.
+            rm -rf data
+            cp -r "$payload/data" data
+            cp "$payload/README.md" README.md
+
+            git add data README.md
+            if git diff --quiet --cached; then echo "no data change"; exit 0; fi
+            git commit -q -m "chore: daily extraction [skip ci]"
+            if git push -q origin main; then exit 0; fi
+            echo "push rejected (attempt $attempt) — re-laying onto the new tip"
           done
           echo "::error::could not push after 3 attempts"
           exit 1
