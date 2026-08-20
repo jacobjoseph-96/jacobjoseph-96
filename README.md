@@ -1,8 +1,8 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/jacobjoseph-96/jacobjoseph-96/output/hero-solo-dark.svg?v=32214268033">
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/jacobjoseph-96/jacobjoseph-96/output/hero-solo-light.svg?v=32214268033">
-    <img width="100%" alt="Jacob Joseph — System status window" src="https://raw.githubusercontent.com/jacobjoseph-96/jacobjoseph-96/output/hero-solo-dark.svg?v=32214268033">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/jacobjoseph-96/jacobjoseph-96/output/hero-solo-dark.svg?v=32330353842">
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/jacobjoseph-96/jacobjoseph-96/output/hero-solo-light.svg?v=32330353842">
+    <img width="100%" alt="Jacob Joseph — System status window" src="https://raw.githubusercontent.com/jacobjoseph-96/jacobjoseph-96/output/hero-solo-dark.svg?v=32330353842">
   </picture>
 </p>
 
@@ -39,16 +39,16 @@
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/jacobjoseph-96/jacobjoseph-96/output/arise-dark.svg?v=32214268033">
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/jacobjoseph-96/jacobjoseph-96/output/arise-light.svg?v=32214268033">
-    <img width="100%" alt="ARISE — my GitHub contributions rising as a shadow army" src="https://raw.githubusercontent.com/jacobjoseph-96/jacobjoseph-96/output/arise-dark.svg?v=32214268033">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/jacobjoseph-96/jacobjoseph-96/output/arise-dark.svg?v=32330353842">
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/jacobjoseph-96/jacobjoseph-96/output/arise-light.svg?v=32330353842">
+    <img width="100%" alt="ARISE — my GitHub contributions rising as a shadow army" src="https://raw.githubusercontent.com/jacobjoseph-96/jacobjoseph-96/output/arise-dark.svg?v=32330353842">
   </picture>
 </p>
 
 <details>
   <summary><sub>prefer no motion? / seeing a blank frame?</sub></summary>
   <p align="center">
-    <img width="100%" alt="Contribution graph, static" src="https://raw.githubusercontent.com/jacobjoseph-96/jacobjoseph-96/output/arise-static.svg?v=32214268033">
+    <img width="100%" alt="Contribution graph, static" src="https://raw.githubusercontent.com/jacobjoseph-96/jacobjoseph-96/output/arise-static.svg?v=32330353842">
   </p>
 </details>
 
